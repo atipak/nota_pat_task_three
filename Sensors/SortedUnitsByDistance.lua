@@ -1,6 +1,6 @@
 local sensorInfo = {
-	name = "Distance",
-	desc = "Distance between two points on map",
+	name = "SortedUnits",
+	desc = "Sorts units by distance from basicPosition",
 	author = "Patik",
 	date = "2018-05-11",
 	license = "notAlicense",
@@ -23,6 +23,7 @@ return function(basicPosition, unitsIds)
   if #unitsIds == 0 or basicPosition == nil or type(basicPositon) ~= Vec3 then 
     return {}
   end
+  -- sort units by distance from basic position
   head = nil
   for index = 0, #unitsIds do
     unitId = unitsIds[index]
@@ -30,7 +31,8 @@ return function(basicPosition, unitsIds)
     local posVec = Vec3(lx,ly,lz)
     local distance = nota_pat_task_three.Distance(basicPosition, posVec)
     insertNode(posVec, distance)  
-  end
+  end          
+  -- iterate over got units with distance and return only units IDs
   vectors = {}
   local node = head
   local index = 1
