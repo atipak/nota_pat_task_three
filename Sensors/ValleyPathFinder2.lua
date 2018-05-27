@@ -6,6 +6,7 @@ local sensorInfo = {
 	license = "notAlicense",
 }
 
+
 local EVAL_PERIOD_DEFAULT = 0 -- acutal, no caching
 
 function getInfo()
@@ -17,32 +18,6 @@ end
 -- global variable
 map = {}
 predecessor = {}
-
-
--- @description return current wind statistics
-return function()
-  -- help variables
-  local mapHeight = Game.mapSizeZ
-  local mapWidth = Game.mapSizeX
-  local step = 20
-  -- creating grid
-  map = {}
-  predecessor = {}
-  local maxX = 1
-  local maxZ = 1
-  for x = 1, mapWidth, step do
-    map[x] = {} 
-    predecessor[x] = {} 
-    for z = 1, mapHeight, step do 
-      if Spring.GetGroundHeight(x, z) == 0 then
-        map[x][z] = true
-      else
-        map[x][z] = false
-      end
-      predecessor[x][z]  = nil
-    end 
-  end
-end
 
 List = {}
 function List.new ()
@@ -79,54 +54,63 @@ function List.popright (list)
   return value
 end
 
--- predecessor
--- node type: Vec3
+
 function findPathInValley(beginPosition, endPosition, step, mapWidth, mapHeight)
   local frontier = List.new()
   local backPath = {}
+  local frontierCount = 0
   List.pushleft(frontier, beginPosition)
-  while #frontier > 0 do
+  frontierCount = frontierCount + 1
+  while frontierCount > 0 do
     local node = List.popright(frontier)
-    if endPosition.x == node.x and endPosition.y == node.y and endPosition.z == node.z then 
+    frontierCount = frontierCount - 1
+    if endPosition.x == node.x and endPosition.z == node.z then 
       local index = 1 
-      while node ~= nil do
+      while node.x ~= beginPosition.x or node.z ~= beginPosition.z do
         local pred = predecessor[node.x][node.z]
         backPath[index] = node
+        index = index + 1
         node = pred
       end
+      backPath[index] = node
+      index = index + 1
       break
     end     
     -- east point
-    px = node.x + iterationShift
+    px = node.x + step
     -- south point
-    mz = node.z - iterationShift
+    mz = node.z - step
     -- west point
-    mx = node.x - iterationShift
+    mx = node.x - step
     -- nord point
-    pz = node.z + iterationShift
+    pz = node.z + step
     -- nord
-    if isOnMap(node.x, pz, mapWidth, mapHeight) and map[node.x][pz] then
+    if isOnMap(node.x, pz, mapWidth, mapHeight) and map[node.x][pz] and predecessor[node.x][pz] == nil then
       local newNode = Vec3(node.x, 0, pz) 
       predecessor[node.x][pz] = node
       List.pushleft(frontier, newNode)  
+      frontierCount = frontierCount + 1
     end
     -- south
-    if isOnMap(node.x, mz, mapWidth, mapHeight) and map[node.x][mz] then
+    if isOnMap(node.x, mz, mapWidth, mapHeight) and map[node.x][mz] and predecessor[node.x][mz] == nil then
       local newNode = Vec3(node.x, 0, mz) 
       predecessor[node.x][mz] = node
-      List.pushleft(frontier, newNode)  
+      List.pushleft(frontier, newNode) 
+      frontierCount = frontierCount + 1 
     end
     -- east
-    if isOnMap(px, node.z, mapWidth, mapHeight) and map[px][node.z] then
+    if isOnMap(px, node.z, mapWidth, mapHeight) and map[px][node.z] and predecessor[px][node.z] == nil then
       local newNode = Vec3(px, 0, node.z) 
       predecessor[px][node.z] = node
       List.pushleft(frontier, newNode)  
+      frontierCount = frontierCount + 1
     end
     -- west
-    if isOnMap(mx, node.z, mapWidth, mapHeight) and map[mx][node.z] then
+    if isOnMap(mx, node.z, mapWidth, mapHeight) and map[mx][node.z] and predecessor[mx][node.z] == nil then
       local newNode = Vec3(mx, 0, node.z) 
       predecessor[mx][node.z] = node
       List.pushleft(frontier, newNode)  
+      frontierCount = frontierCount + 1
     end
   end
   -- reversing of backPath
@@ -137,8 +121,19 @@ function findPathInValley(beginPosition, endPosition, step, mapWidth, mapHeight)
     end
     backPath = newBackPath
   end
+  resetPredecessor(step, mapWidth, mapHeight)
   return backPath
 end
+
+function resetPredecessor(step, mapWidth, mapHeight)
+  for x = 1, mapWidth, step do
+    for z = 1, mapHeight, step do 
+      predecessor[x][z]  = nil
+    end
+  end 
+end
+
+
 
 function isOnMap(x, z, mapWidth, mapHeight)
   -- east point
@@ -159,6 +154,40 @@ function isOnMap(x, z, mapWidth, mapHeight)
   end 
   return true
 end
+
+
+-- @description return current wind statistics
+return function(pathParameters, heightThreshold, step)
+  -- help variables
+  local mapHeight = Game.mapSizeZ
+  local mapWidth = Game.mapSizeX
+  
+  -- creating grid
+  map = {}
+  predecessor = {}
+  for x = 1, mapWidth, step do
+    map[x] = {} 
+    predecessor[x] = {} 
+    for z = 1, mapHeight, step do 
+      if Spring.GetGroundHeight(x, z) <= heightThreshold then
+        map[x][z] = true
+      else
+        map[x][z] = false
+      end
+      predecessor[x][z]  = nil
+    end 
+  end  
+  local pathParams = {}
+  for i = 1, #pathParameters do
+    --Spring.Echo(i)
+    local p = findPathInValley(pathParameters[i]["begin"], pathParameters[i]["end"], step, mapWidth, mapHeight)   
+    pathParams[i] = pathParameters[i]
+    pathParams[i]["path"] = p
+  end
+  return pathParams
+end
+
+
 
 
 
