@@ -1,6 +1,6 @@
 local sensorInfo = {
-	name = "FreePositions",
-	desc = "Returns free positions. It can return {}",
+	name = "ValleyPathFinder",
+	desc = "Finds path between two points in valley. Path is stored in key 'path'",
 	author = "Patik",
 	date = "2018-05-11",
 	license = "notAlicense",
@@ -54,7 +54,10 @@ function List.popright (list)
   return value
 end
 
-
+-- BFS 
+-- beginPosition Vec3
+-- endPosition Vec3
+-- step in grid 
 function findPathInValley(beginPosition, endPosition, step, mapWidth, mapHeight)
   local frontier = List.new()
   local backPath = {}
@@ -64,6 +67,7 @@ function findPathInValley(beginPosition, endPosition, step, mapWidth, mapHeight)
   while frontierCount > 0 do
     local node = List.popright(frontier)
     frontierCount = frontierCount - 1
+    -- the current point has to be the same like end point -> find the path using precedessors
     if endPosition.x == node.x and endPosition.z == node.z then 
       local index = 1 
       while node.x ~= beginPosition.x or node.z ~= beginPosition.z do
@@ -125,6 +129,7 @@ function findPathInValley(beginPosition, endPosition, step, mapWidth, mapHeight)
   return backPath
 end
 
+-- reset of array with predecessors
 function resetPredecessor(step, mapWidth, mapHeight)
   for x = 1, mapWidth, step do
     for z = 1, mapHeight, step do 
@@ -134,7 +139,7 @@ function resetPredecessor(step, mapWidth, mapHeight)
 end
 
 
-
+-- check if point with coors x and z is on map 
 function isOnMap(x, z, mapWidth, mapHeight)
   -- east point
   if x > mapWidth then 
@@ -163,6 +168,7 @@ return function(pathParameters, heightThreshold, step)
   local mapWidth = Game.mapSizeX
   
   -- creating grid
+  -- point under limit height are true, initialize predecessor array
   map = {}
   predecessor = {}
   for x = 1, mapWidth, step do

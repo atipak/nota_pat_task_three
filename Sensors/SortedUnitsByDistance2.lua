@@ -14,6 +14,7 @@ function getInfo()
 	}
 end
 
+-- bubble sort
 function sort(distances)
   while true do
     local again = false 
@@ -33,16 +34,19 @@ function sort(distances)
 end
 
 
+-- return euclide distance
 function vectorsDistance(positionOne, positionTwo) 
   return math.sqrt(math.pow(positionOne.x - positionTwo.x, 2) + math.pow(positionOne.z - positionTwo.z, 2))
 end
 
 -- @description ff 
 return function(basicPosition, unitsIds)
+  -- basic conditions
   if #unitsIds == 0 or basicPosition == nil then 
     return {}
   end
   -- sort units by distance from basic position
+  -- calculate distance and creates an array
   head = nil
   local distances = {}
   for index = 1, #unitsIds do
@@ -52,6 +56,7 @@ return function(basicPosition, unitsIds)
     local distance = vectorsDistance(basicPosition, posVec)
     distances[index] = {unitID = unitId, dist = distance, vector = posVec}
   end  
+  -- sorting
   distances = sort(distances)         
   -- iterate over units with distance and return only units IDs
   ids = {}

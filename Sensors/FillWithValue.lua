@@ -1,6 +1,6 @@
 local sensorInfo = {
 	name = "UnitsToRescue",
-	desc = "Returns ids of units to rescue. It can return {}",
+	desc = "Creates vector of dimension count with values of given value",
 	author = "Patik",
 	date = "2018-05-11",
 	license = "notAlicense",

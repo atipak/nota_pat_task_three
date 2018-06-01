@@ -6,7 +6,7 @@ local sensorInfo = {
 	license = "notAlicense",
 }
 
-local EVAL_PERIOD_DEFAULT = 0 -- acutal, no caching
+local EVAL_PERIOD_DEFAULT = -1 -- more times per frame
 
 function getInfo()
 	return {
@@ -15,7 +15,9 @@ function getInfo()
 end
 
 -- global variable
+-- grid of the map
 map = {}
+-- array of predecessors of nodes in BFS
 predecessor = {}
 
 -- ====
@@ -58,17 +60,21 @@ end
 -- ====
 -- ====
 
--- predecessor
--- node type: Vec3
+
+-- BFS algorithm
+-- beginPosition: Vec3 the position where BFS should begin
+-- step in grid
 function findNearestPoint(beginPosition, step, mapWidth, mapHeight)
   local frontier = List.new()
   local frontierCount = 0
   local backPath = {}
   List.pushleft(frontier, beginPosition)
   frontierCount = frontierCount + 1
+  -- if there are nodes to proccess do
   while frontierCount > 0 do
     local node = List.popright(frontier)
     frontierCount = frontierCount - 1
+    -- current node is under limit height
     if map[node.x][node.z] then 
       resetPredecessor(step, mapWidth, mapHeight)
       return Vec3(node.x, Spring.GetGroundHeight(node.x, node.z), node.z)
@@ -113,6 +119,7 @@ function findNearestPoint(beginPosition, step, mapWidth, mapHeight)
   return nil
 end
 
+-- check if point with coors x and z is on map 
 function isOnMap(x, z, mapWidth, mapHeight)
   -- east point
   if x > mapWidth then 
@@ -133,6 +140,7 @@ function isOnMap(x, z, mapWidth, mapHeight)
   return true
 end
 
+-- set nil into predecessor array 
 function resetPredecessor(step, mapWidth, mapHeight)
   for x = 1, mapWidth, step do
     for z = 1, mapHeight, step do 
@@ -148,6 +156,7 @@ return function(positions, heightThreshold, step)
   local mapHeight = Game.mapSizeZ
   local mapWidth = Game.mapSizeX
   -- creating grid
+  -- point under limit height are true, initialize predecessor array
   map = {}
   predecessor = {}
   local maxX = 1
@@ -164,6 +173,7 @@ return function(positions, heightThreshold, step)
       predecessor[x][z]  = nil
     end
   end 
+  -- for given points finds nearest low points and the referred node set into "end" key  
   do
     local nearestPositions = {}
     for i = 1, #positions do

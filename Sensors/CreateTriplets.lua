@@ -1,6 +1,6 @@
 local sensorInfo = {
-	name = "CreatesPairs",
-	desc = "Returns {[transporterID] = transporteeID, ...}. It can return {}",
+	name = "CreatesTriplets",
+	desc = "Add to given array with already stored keys a new key with begin positions",
 	author = "Patik",
 	date = "2018-05-11",
 	license = "notAlicense",

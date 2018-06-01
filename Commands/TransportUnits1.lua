@@ -24,18 +24,25 @@ function getInfo()
 	}
 end
 
+-- current states of units
 local states = {}
+-- target location, where the unit should put down transportee
 local safeZoneVectors = {}
+-- already rescued or being rescued units
 local assignedUnits = {} 
+-- which unit has to rescue which unit
 local unitToRescue = {}
+-- current index of path, where the units is located
 local pathIndex = {}
 local threshold = 50
+-- enumeration of states for units
 local thereState, backState, loadState, unloadState, toSafeZoneState = "moveThere", "moveBack", "loadUnit", "unloadUnit", "transportToSafeZone"
 
 
 
+-- if there are units to rescue and there are transports as well, the node returns running
 function Run(self, unitIds, parameter) 
-  -- creating keyset from parameter.transUnitsPairs
+  -- gies through units array and check if the unit has a task or assigns a new task to it if there is a unit to rescue 
   for i = 1, #unitIds do 
     local unitId = unitIds[i]
     local unitState = states[unitId]
@@ -44,10 +51,15 @@ function Run(self, unitIds, parameter)
       if unitState == nil then
         -- get free unit to rescue
         local index = getFreeUnit(parameter.unitsToRescue, parameter.safePos, parameter.safeRadius)
+        -- there is free unit
         if index ~= -1 then
-          assignUnit(index) 
+          -- reserve unit
+          assignUnit(index)
+          -- set a new state 
           states[unitId] = thereState
+          -- remember the unit
           unitToRescue[unitId] = index
+          -- move transporter to first path point, there should be every time a one point in path
           pathIndex[unitId] = 1
           Spring.GiveOrderToUnit(unitId, CMD.MOVE, parameter.unitsToRescue[index].path[1]:AsSpringVector(), {})
         end           
@@ -56,6 +68,7 @@ function Run(self, unitIds, parameter)
       if unitState == thereState then
         local index = unitToRescue[unitId]
         local targetPos = parameter.unitsToRescue[index].path[pathIndex[unitId]]
+        -- if the unit is on position, change its state to "load" and execute action
         if isOnPosition(unitId, targetPos) then
           if pathIndex[unitId] < #parameter.unitsToRescue[index].path then
             pathIndex[unitId] = pathIndex[unitId] + 1
@@ -70,6 +83,7 @@ function Run(self, unitIds, parameter)
       if unitState == loadState then
         local index = unitToRescue[unitId]
         local unitInDanger = parameter.unitsToRescue[index].unitId
+        -- if the unit loaded a unit in danger, change its state to "move" and transport unit to first point of backpath 
         if isLoaded(unitId, unitInDanger) then
           Spring.GiveOrderToUnit(unitId, CMD.MOVE, parameter.unitsToRescue[index].path[pathIndex[unitId]]:AsSpringVector(), {})
           states[unitId] = backState  
@@ -79,6 +93,7 @@ function Run(self, unitIds, parameter)
       if unitState == backState then
         local index = unitToRescue[unitId]
         local targetPos = parameter.unitsToRescue[index].path[pathIndex[unitId]]
+        -- if the unit is on position (last point of path), choose random point in safe area and transport the unit there
         if isOnPosition(unitId, targetPos) then
           if pathIndex[unitId] > 1 then
             pathIndex[unitId] = pathIndex[unitId] - 1
@@ -100,6 +115,7 @@ function Run(self, unitIds, parameter)
       if unitState == toSafeZoneState then
         local index = unitToRescue[unitId]
         local targetVector = safeZoneVectors[unitId]
+        -- if the unit is on position, change its state to "unload" and execute action
         if isOnPosition(unitId, targetVector) then  
           local lx, ly, lz = Spring.GetUnitPosition(unitId)        
           Spring.GiveOrderToUnit(unitId, CMD.UNLOAD_UNITS, {lx, ly, lz, 15} , {})
@@ -111,6 +127,7 @@ function Run(self, unitIds, parameter)
       if unitState == unloadState then
         local index = unitToRescue[unitId]
         local unitInDanger = parameter.unitsToRescue[index].unitId
+        -- if the unit is unloaded, set the unit state to nil, so the unit can obtain new task
         if isUnloaded(unitId, unitInDanger) then
           -- clean up 
           unitToRescue[unitId] = nil
@@ -123,6 +140,7 @@ function Run(self, unitIds, parameter)
         end
       end
     else 
+      -- something bad happend to transportee
       -- remove all saved values
       unitToRescue[unitId] = nil
       states[unitId] = nil
@@ -138,6 +156,7 @@ function cleaning()
 
 end
 
+-- implementation of ternary operator
 function ternary (cond , T , F)
     if cond then return T else return F end
 end

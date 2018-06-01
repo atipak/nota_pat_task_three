@@ -10,11 +10,14 @@ end
 targetPlaces = {}
 threshold = 700
 
+-- the function always returns RUNNING except there are no units 
 function Run(self, unitIds, parameter) 
-  -- creating keyset from parameter.transUnitsPairs
-    -- help variables
+  --math.randomseed(42)
+  -- help variables
   local mapHeight = Game.mapSizeZ
   local mapWidth = Game.mapSizeX
+  -- for each unit check if it is on the target position
+  -- if no target position is given, choose a random point on map
   for i = 1, #unitIds do
     local unitId = unitIds[i]
     if isUnitOK(unitId) then
@@ -37,14 +40,14 @@ end
 -- check function
 function isUnitOK(unitID)
   if not Spring.ValidUnitID(unitID) or Spring.GetUnitIsDead(unitID) then
-    transportersStates[unitID] = endedState
     return false
   else
     return true
   end
 end
 
-
+-- check if given unit is on target position 
+-- threshold is global variable
 function isOnPosition(transporterID, targetPosition) 
   local tranPosX, tranPosY, tranPosZ = Spring.GetUnitPosition(transporterID)
   if math.abs(tranPosX - targetPosition.x) > threshold or math.abs(tranPosZ - targetPosition.z) > threshold then 

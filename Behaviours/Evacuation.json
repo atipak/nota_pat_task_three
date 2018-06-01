@@ -16,46 +16,39 @@
 			"x": 1436,
 			"y": 496
 		},
-		"1aVYIBL02vr0qwAPNeTu79jpUIZ3DGof": {
-			"height": 74,
-			"title": "echo",
-			"width": 296,
-			"x": 1837,
-			"y": 210
-		},
 		"4Y0SaBVU6x7xTr5rtQqvyVpiWy7G4FhD": {
 			"height": 98,
 			"title": "store",
 			"width": 564,
-			"x": 953,
+			"x": 954,
 			"y": -308
 		},
 		"79GSxni7z5FJ32hg3DJdikgprk1ymvsN": {
 			"height": 60,
 			"title": "repeat",
 			"width": 131,
-			"x": 1161,
+			"x": 1162,
 			"y": 288
 		},
 		"7x7xdEKAlJskTj9spE1Pdi9Dm6vFv2NH": {
 			"height": 98,
 			"title": "store",
 			"width": 564,
-			"x": 950,
+			"x": 951,
 			"y": 176
 		},
 		"9pI3fK5B2Iqhlku6N3gcjRfANPrPatID": {
 			"height": 60,
 			"title": "repeat",
 			"width": 131,
-			"x": 735,
+			"x": 737,
 			"y": 272
 		},
 		"BatSaHNxvyhKimJF73EegJtAmOyn6Tgj": {
 			"height": 94,
 			"title": "store",
-			"width": 304,
-			"x": 962,
+			"width": 341,
+			"x": 963,
 			"y": -493
 		},
 		"CWdVSdQJln0jejQpkgvAufql52a0Zjvf": {
@@ -69,56 +62,56 @@
 			"height": 98,
 			"title": "store",
 			"width": 564,
-			"x": 957,
+			"x": 958,
 			"y": -403
 		},
 		"O5Nyz4a8Y4NwAhXM098ztCSDcnGdAgsZ": {
 			"height": 94,
 			"title": "store",
 			"width": 398,
-			"x": 967,
+			"x": 968,
 			"y": -683
 		},
 		"OX1ldcyS2GyBCdB7mm5q9qU4uZr3mB4v": {
 			"height": 98,
 			"title": "store",
 			"width": 564,
-			"x": 957,
+			"x": 958,
 			"y": -208
 		},
 		"RHiV9mEEMoXqXR7szZqu309FTkQ1dlvP": {
 			"height": 94,
 			"title": "store",
 			"width": 373,
-			"x": 963,
+			"x": 964,
 			"y": -773
 		},
 		"X1xoqq5KtQIHFfMNaARzVzpiOaz5jPnY": {
 			"height": 98,
 			"title": "store",
 			"width": 564,
-			"x": 956,
+			"x": 957,
 			"y": -110
 		},
 		"XoGQm6qX4rkQxYd3vE5mO4EMsEJ2exQo": {
 			"height": 98,
 			"title": "store",
 			"width": 564,
-			"x": 950,
+			"x": 951,
 			"y": -11
 		},
 		"XyYDC3kYh42n4LjuIv7UqbA6JVMaMeG9": {
 			"height": 70,
 			"title": "parallel",
 			"width": 207,
-			"x": 922,
+			"x": 923,
 			"y": 327
 		},
 		"cCpb7JII7nn7fAChNP6maYGXMrH6YCXs": {
 			"height": 94,
 			"title": "store",
 			"width": 373,
-			"x": 969,
+			"x": 970,
 			"y": -871
 		},
 		"coF9GZakiSmORPZHlbiKQv1dfhw2GVDQ": {
@@ -139,28 +132,35 @@
 			"height": 94,
 			"title": "store",
 			"width": 305,
-			"x": 965,
+			"x": 966,
 			"y": -582
+		},
+		"gW3IUzMll964geTfvj1uEE1Go0dYndEx": {
+			"height": 54,
+			"title": "nota_common.manualMissionEnd",
+			"width": 296,
+			"x": 1841,
+			"y": 206
 		},
 		"m7ni0jjuYYmBHgvTeEOeiCvyNxjmJUbe": {
 			"height": 60,
 			"title": "sequence",
 			"width": 143,
-			"x": 358,
+			"x": 359,
 			"y": 8
 		},
 		"rvSJJTJdquPWNjGwBUbPwIxQeuZNDhpw": {
 			"height": 70,
 			"title": "roleSplit",
 			"width": 207,
-			"x": 1163,
+			"x": 1164,
 			"y": 537
 		},
 		"w44zQtx3lnBrvHYRIiGbbKCTaqP4oMyI": {
 			"height": 98,
 			"title": "store",
 			"width": 1081,
-			"x": 949,
+			"x": 950,
 			"y": 84
 		}
 	},
@@ -241,7 +241,7 @@
 				"value": "safeRadius"
 			}, {
 				"name": "value",
-				"value": "core.MissionInfo().safeArea.radius"
+				"value": "core.MissionInfo().safeArea.radius - 100"
 			}, {
 				"name": "scriptName",
 				"value": "store"
@@ -316,7 +316,7 @@
 				"value": "nearestBsPosition"
 			}, {
 				"name": "value",
-				"value": "nota_pat_task_three.NearestValleyPositions1(bsPos, 50, step)"
+				"value": "nota_pat_task_three.NearestValleyPositions(bsPos, 50, step)"
 			}, {
 				"name": "scriptName",
 				"value": "store"
@@ -358,16 +358,13 @@
 					"children": [ {
 						"children": [ {
 							"children": [],
-							"id": "1aVYIBL02vr0qwAPNeTu79jpUIZ3DGof",
+							"id": "gW3IUzMll964geTfvj1uEE1Go0dYndEx",
 							"nodeType": "luaCommand",
 							"parameters": [ {
-								"name": "msg",
-								"value": "nota_pat_task_three.EndMission()"
-							}, {
 								"name": "scriptName",
-								"value": "echo"
+								"value": "nota_common.manualMissionEnd"
 							} ],
-							"scriptName": "echo"
+							"scriptName": "nota_common.manualMissionEnd"
 						}, {
 							"children": [],
 							"id": "crjxUnxAHx9DH1Lnn0mNQDTBwpUhaQYe",

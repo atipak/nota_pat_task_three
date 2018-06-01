@@ -23,7 +23,8 @@ return function(unitsNames)
     return {}
   end
   local unitsToRescue = {}
-  -- searching over all units, if tranaporters is found, its id is stored
+  -- if unit name is in array with correct names is this unit added
+  -- unitsNames from sensor UnitNames
   local index = 1
   for i = 1, #allMyUnits do
     local unitId = allMyUnits[i]
